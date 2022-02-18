@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:bitcoin_ticker_flutter/models/models.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PriceScreen extends StatefulWidget {
@@ -24,7 +27,7 @@ class _PriceScreenState extends State<PriceScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
             child: Card(
-              color: Colors.lightBlueAccent,
+              color: Colors.indigoAccent,
               elevation: 5,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -49,22 +52,33 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             color: Theme.of(context).primaryColor,
             padding: const EdgeInsets.only(bottom: 30),
-            child: DropdownButton<String>(
-              onChanged: (value) {
-                setState(() {
-                  selectedCurrency = value;
-                });
-              },
-              value: selectedCurrency,
-              items: CoinData.currenciesList
-                  .map(
-                    (coin) => DropdownMenuItem<String>(
-                      child: Text(coin),
-                      value: coin,
-                    ),
+            child: !Platform.isIOS
+                ? CupertinoPicker(
+                    itemExtent: 32,
+                    onSelectedItemChanged: (index) {},
+                    children: CoinData.currenciesList
+                        .map(
+                          (coin) => Text(
+                            coin,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        )
+                        .toList(),
                   )
-                  .toList(),
-            ),
+                : DropdownButton<String>(
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCurrency = value;
+                      });
+                    },
+                    value: selectedCurrency,
+                    items: CoinData.currenciesList
+                        .map((coin) => DropdownMenuItem<String>(
+                              child: Text(coin),
+                              value: coin,
+                            ))
+                        .toList(),
+                  ),
           ),
         ],
       ),
