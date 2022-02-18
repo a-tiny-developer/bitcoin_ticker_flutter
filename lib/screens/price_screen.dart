@@ -1,6 +1,7 @@
-import 'dart:io';
+import 'dart:io' show Platform;
 
 import 'package:bitcoin_ticker_flutter/models/models.dart';
+import 'package:bitcoin_ticker_flutter/providers/coins_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String? selectedCurrency = 'USD';
+  String selectedCurrency = 'USD';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,30 +22,45 @@ class _PriceScreenState extends State<PriceScreen> {
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
-            child: Card(
-              color: Colors.indigoAccent,
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 28,
-                ),
-                child: Text(
-                  '1 BTC  = ? USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: CoinData.cryptoList.length,
+              itemBuilder: (BuildContext context, int index) {
+                var cryptoCoin = CoinData.cryptoList[index];
+                return FutureBuilder<CoinData>(
+                  future:
+                      CoinsProvider.getCoinData(cryptoCoin, selectedCurrency),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
+                            child: Card(
+                              color: Colors.indigoAccent,
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 15,
+                                  horizontal: 28,
+                                ),
+                                child: Text(
+                                  '$cryptoCoin = ${snapshot.data!.rate?.toStringAsFixed(2) ?? 'Error'} $selectedCurrency',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox();
+                  },
+                );
+              },
             ),
           ),
           Container(
@@ -52,10 +68,14 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             color: Theme.of(context).primaryColor,
             padding: const EdgeInsets.only(bottom: 30),
-            child: !Platform.isIOS
+            child: Platform.isIOS
                 ? CupertinoPicker(
                     itemExtent: 32,
-                    onSelectedItemChanged: (index) {},
+                    onSelectedItemChanged: (index) {
+                      setState(() {
+                        selectedCurrency = CoinData.currenciesList[index];
+                      });
+                    },
                     children: CoinData.currenciesList
                         .map(
                           (coin) => Text(
@@ -68,7 +88,7 @@ class _PriceScreenState extends State<PriceScreen> {
                 : DropdownButton<String>(
                     onChanged: (value) {
                       setState(() {
-                        selectedCurrency = value;
+                        selectedCurrency = value!;
                       });
                     },
                     value: selectedCurrency,
