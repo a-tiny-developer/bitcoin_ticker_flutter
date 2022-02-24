@@ -1,16 +1,9 @@
-# bitcoin_ticker_flutter
+# Bitcoin Tricker
 
-A new Flutter project.
+Simple app to learn Flutter
 
-## Getting Started
+-Coin Api
 
-This project is a starting point for a Flutter application.
+App from [The Complete 2021 Flutter Development Bootcamp with Dart](https://www.udemy.com/course/flutter-bootcamp-with-dart/)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+https://user-images.githubusercontent.com/93559957/155445820-5d44d606-27e5-41d2-bec6-31eb18722467.mp4
